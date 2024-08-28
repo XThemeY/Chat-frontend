@@ -9,6 +9,14 @@ const authOptions: AuthOptions = {
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+			async profile(profile) {
+				return {
+					id: profile.sub,
+					name: profile.name,
+					email: profile.email,
+					image: profile.picture,
+				};
+			},
 		}),
 		// VkProvider({
 		// 	clientId: process.env.VK_CLIENT_ID as string,
@@ -39,13 +47,15 @@ const authOptions: AuthOptions = {
 				const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
 					method: 'POST',
 					body: JSON.stringify(credentials),
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+					},
 				});
 
-				const user = await res.json();
+				const auth = await res.json();
 
-				if (res.ok && user) {
-					return user;
+				if (res.ok && auth) {
+					return auth.user;
 				}
 
 				throw new Error('Invalid credentials');
@@ -58,14 +68,56 @@ const authOptions: AuthOptions = {
 	secret: process.env.NEXTAUTH_SECRET,
 	callbacks: {
 		async signIn({ user, account, profile }) {
-			console.log('signInAUTHMEGA', user, account, profile);
-			return true;
+			if (account?.provider === 'credentials') {
+				return true;
+			}
+
+			if (!account) {
+				return false;
+			}
+
+			const { provider, providerAccountId, type } = account;
+			const { name, email } = user;
+
+			const res = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
+				method: 'POST',
+				body: JSON.stringify({
+					name,
+					email,
+					type,
+					provider,
+					providerAccountId,
+				}),
+				headers: { 'Content-Type': 'application/json' },
+			});
+			console.log('user', user);
+			console.log('account', account);
+			console.log('profile', profile);
+
+			if (res.ok) {
+				return true;
+			}
+
+			return false;
 		},
-		async redirect({ url, baseUrl }) {
-			return '/';
+
+		async jwt({ token, user, trigger }) {
+			if (user) {
+				console.log('jwt token', token);
+				console.log('jwt user', user);
+				return { ...token, ...user };
+			}
+
+			return token;
 		},
-		async session({ session, token }) {
-			// console.log('session', session, token);
+		async session({ token, session }) {
+			if (session?.user) {
+				session.user = token.user;
+				session.account = token.account;
+			}
+
+			console.log('session', session);
+			console.log('session token', token);
 			return session;
 		},
 	},

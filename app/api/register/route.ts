@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
 	try {
 		const body = await request.json();
-		const { name, login, password, confirmPassword } = body;
+
+		const { name, login, password, confirmPassword, type, provider } = body;
 
 		if (password !== confirmPassword) {
 			return new NextResponse('Passwords do not match', { status: 400 });
@@ -15,14 +16,16 @@ export async function POST(request: Request) {
 
 		const res = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
 			method: 'POST',
-			body: JSON.stringify({ name, login, password }),
+			body: JSON.stringify({ name, login, password, type, provider }),
 			headers: { 'Content-Type': 'application/json' },
 		});
+		const user = await res.json();
+		if (res.ok && user) {
+			return new NextResponse(user);
+		}
 
-		const accessToken = await res.json();
-		return NextResponse.json(accessToken);
+		throw new Error('Internal error');
 	} catch (error) {
-		console.error(error, 'REGISTRATION_ERROR');
 		return new NextResponse('Internal Error', { status: 500 });
 	}
 }

@@ -8,13 +8,16 @@ import AuthSocialButton from './AuthSocialButton';
 import { BsGoogle } from 'react-icons/bs';
 import { IoLogoVk } from 'react-icons/io5';
 import { FaYandex } from 'react-icons/fa';
-import { signIn } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 type Variant = 'LOGIN' | 'REGISTER';
 
 const AuthForm = () => {
+	const { data: session } = useSession();
+	console.log('session123', session);
+
 	const [variant, setVariant] = useState<Variant>('LOGIN');
 	const [isLoading, setIsLoading] = useState(false);
 	const toggleVariant = useCallback(() => {
@@ -36,6 +39,8 @@ const AuthForm = () => {
 			// email: '',
 			password: '',
 			confirmPassword: '',
+			type: 'credentials',
+			provider: 'wasted-messenger',
 		},
 	});
 
@@ -80,6 +85,10 @@ const AuthForm = () => {
 			.finally(() => setIsLoading(false));
 	};
 
+	const logout = async () => {
+		console.log('logout');
+	};
+
 	return (
 		<div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
 			<div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
@@ -122,6 +131,9 @@ const AuthForm = () => {
 						{variant === 'LOGIN' ? 'Sign in' : 'Register'}
 					</Button>
 				</form>
+				<Button fullWidth type='button' onClick={logout}>
+					Logout
+				</Button>
 				<div className='mt-6'>
 					<div className='relative'>
 						<div className='absolute inset-0 flex items-center'>
