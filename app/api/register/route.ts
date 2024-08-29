@@ -19,13 +19,14 @@ export async function POST(request: Request) {
 			body: JSON.stringify({ name, login, password, type, provider }),
 			headers: { 'Content-Type': 'application/json' },
 		});
-		const user = await res.json();
-		if (res.ok && user) {
-			return new NextResponse(user);
+
+		if (res.status === 201) {
+			return new NextResponse();
 		}
 
 		throw new Error('Internal error');
 	} catch (error) {
+		console.log(error);
 		return new NextResponse('Internal Error', { status: 500 });
 	}
 }

@@ -16,7 +16,6 @@ type Variant = 'LOGIN' | 'REGISTER';
 
 const AuthForm = () => {
 	const { data: session } = useSession();
-	console.log('session123', session);
 
 	const [variant, setVariant] = useState<Variant>('LOGIN');
 	const [isLoading, setIsLoading] = useState(false);
@@ -40,16 +39,32 @@ const AuthForm = () => {
 			password: '',
 			confirmPassword: '',
 			type: 'credentials',
-			provider: 'wasted-messenger',
+			provider: 'credentials',
 		},
 	});
 
-	const onSubmit: SubmitHandler<FieldValues> = (data) => {
+	const credSignIn = (data: FieldValues) => {
+		signIn('credentials', { ...data, redirect: false })
+			.then((callback) => {
+				if (callback?.error) {
+					toast.error('Invalid credentials');
+				}
+				if (callback?.ok) {
+					toast.success('Successfully logged in');
+				}
+			})
+			.finally(() => setIsLoading(false));
+	};
+
+	const onSubmit: SubmitHandler<FieldValues> = async (data) => {
 		setIsLoading(true);
 
 		if (variant === 'REGISTER') {
 			axios
 				.post('/api/register', data)
+				.then(async () => {
+					credSignIn(data);
+				})
 				.catch((error) => {
 					toast.error(error.response.data);
 				})
@@ -57,16 +72,7 @@ const AuthForm = () => {
 		}
 
 		if (variant === 'LOGIN') {
-			signIn('credentials', { ...data, redirect: false })
-				.then((callback) => {
-					if (callback?.error) {
-						toast.error('Invalid credentials');
-					}
-					if (callback?.ok) {
-						toast.success('Successfully logged in');
-					}
-				})
-				.finally(() => setIsLoading(false));
+			credSignIn(data);
 		}
 	};
 

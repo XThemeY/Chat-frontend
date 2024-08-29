@@ -25,6 +25,13 @@ const authOptions: AuthOptions = {
 		YandexProvider({
 			clientId: process.env.YANDEX_CLIENT_ID as string,
 			clientSecret: process.env.YANDEX_CLIENT_SECRET as string,
+			async profile(profile) {
+				return {
+					id: profile.id,
+					name: profile.display_name,
+					email: profile.default_email,
+				};
+			},
 		}),
 		CredentialsProvider({
 			name: 'сredentials',
@@ -44,21 +51,23 @@ const authOptions: AuthOptions = {
 				if (credentials?.password !== credentials?.confirmPassword) {
 					throw new Error('Passwords do not match');
 				}
-				const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
-					method: 'POST',
-					body: JSON.stringify(credentials),
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				});
 
-				const auth = await res.json();
+				try {
+					const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
+						method: 'POST',
+						body: JSON.stringify(credentials),
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					});
+					const auth = await res.json();
 
-				if (res.ok && auth) {
-					return auth.user;
+					if (res.ok && auth) {
+						return auth;
+					}
+				} catch (error) {
+					throw new Error('Invalid credentials');
 				}
-
-				throw new Error('Invalid credentials');
 			},
 		}),
 	],
@@ -77,47 +86,53 @@ const authOptions: AuthOptions = {
 			}
 
 			const { provider, providerAccountId, type } = account;
-			const { name, email } = user;
+			const { name, email, image } = user;
 
-			const res = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
-				method: 'POST',
-				body: JSON.stringify({
-					name,
-					email,
-					type,
-					provider,
-					providerAccountId,
-				}),
-				headers: { 'Content-Type': 'application/json' },
-			});
-			console.log('user', user);
-			console.log('account', account);
-			console.log('profile', profile);
+			try {
+				const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
+					method: 'POST',
+					body: JSON.stringify({
+						name,
+						email,
+						type,
+						provider,
+						image,
+						providerAccountId,
+					}),
+					headers: { 'Content-Type': 'application/json' },
+				});
 
-			if (res.ok) {
-				return true;
+				const response = await res.json();
+
+				user.id = response.user.id;
+				user.image = response.user.image;
+
+				if (res.ok) {
+					return true;
+				}
+			} catch (error) {
+				throw new Error('Login error');
 			}
-
 			return false;
 		},
 
-		async jwt({ token, user, trigger }) {
-			if (user) {
-				console.log('jwt token', token);
-				console.log('jwt user', user);
-				return { ...token, ...user };
+		async jwt({ token, user, trigger, account }) {
+			if (user?.account && user?.user && account?.provider === 'credentials') {
+				token.account = user.account;
+				token.user = user.user;
+				return token;
 			}
-
+			if (account) {
+				token.account = account;
+			}
+			if (user) {
+				token.user = user;
+			}
 			return token;
 		},
 		async session({ token, session }) {
-			if (session?.user) {
-				session.user = token.user;
-				session.account = token.account;
-			}
-
-			console.log('session', session);
-			console.log('session token', token);
+			session.user = token.user;
+			session.account = token.account;
 			return session;
 		},
 	},
