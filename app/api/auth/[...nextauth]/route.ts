@@ -3,6 +3,9 @@ import GoogleProvider from 'next-auth/providers/google';
 import VkProvider from 'next-auth/providers/vk';
 import YandexProvider from 'next-auth/providers/yandex';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { setCookie } from '@/app/utils';
+import { post } from '@/app/utils/fetch';
+import { headers } from 'next/headers';
 
 const authOptions: AuthOptions = {
 	providers: [
@@ -53,14 +56,13 @@ const authOptions: AuthOptions = {
 				}
 
 				try {
-					const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
-						method: 'POST',
-						body: JSON.stringify(credentials),
-						headers: {
-							'Content-Type': 'application/json',
-						},
-					});
+					const res = await post('auth/login', credentials);
+
+					setCookie(res);
+					// await post('auth/log', {});
 					const auth = await res.json();
+
+					console.log('auth', auth.account.access_token);
 
 					if (res.ok && auth) {
 						return auth;
@@ -89,18 +91,15 @@ const authOptions: AuthOptions = {
 			const { name, email, image } = user;
 
 			try {
-				const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
-					method: 'POST',
-					body: JSON.stringify({
-						name,
-						email,
-						type,
-						provider,
-						image,
-						providerAccountId,
-					}),
-					headers: { 'Content-Type': 'application/json' },
+				const res = await post('auth/login', {
+					name,
+					email,
+					type,
+					provider,
+					image,
+					providerAccountId,
 				});
+				setCookie(res);
 
 				const response = await res.json();
 
@@ -111,6 +110,8 @@ const authOptions: AuthOptions = {
 					return true;
 				}
 			} catch (error) {
+				console.log(error);
+
 				throw new Error('Login error');
 			}
 			return false;

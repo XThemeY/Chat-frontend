@@ -11,6 +11,7 @@ import { FaYandex } from 'react-icons/fa';
 import { useSession, signIn } from 'next-auth/react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { post } from '@/app/utils/fetch';
 
 type Variant = 'LOGIN' | 'REGISTER';
 
@@ -43,7 +44,7 @@ const AuthForm = () => {
 		},
 	});
 
-	const credSignIn = (data: FieldValues) => {
+	const credSignIn = async (data: FieldValues) => {
 		signIn('credentials', { ...data, redirect: false })
 			.then((callback) => {
 				if (callback?.error) {

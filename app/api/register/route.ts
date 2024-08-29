@@ -1,3 +1,4 @@
+import { post } from '@/app/utils/fetch';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
@@ -13,11 +14,12 @@ export async function POST(request: Request) {
 		if (!name || !login || !password) {
 			return new NextResponse('Invalid data', { status: 400 });
 		}
-
-		const res = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
-			method: 'POST',
-			body: JSON.stringify({ name, login, password, type, provider }),
-			headers: { 'Content-Type': 'application/json' },
+		const res = await post('auth/register', {
+			name,
+			login,
+			password,
+			type,
+			provider,
 		});
 
 		if (res.status === 201) {
