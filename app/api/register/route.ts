@@ -23,10 +23,10 @@ export async function POST(request: Request) {
 		});
 
 		if (res.status === 201) {
-			return new NextResponse();
+			return new NextResponse(null, { status: res.status });
 		}
 
-		throw new Error('Internal error');
+		return new NextResponse('Internal Error', { status: res.status });
 	} catch (error) {
 		console.log(error);
 		return new NextResponse('Internal Error', { status: 500 });

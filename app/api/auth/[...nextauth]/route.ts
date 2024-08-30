@@ -4,10 +4,9 @@ import VkProvider from 'next-auth/providers/vk';
 import YandexProvider from 'next-auth/providers/yandex';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { setCookie } from '@/app/utils';
-import { post } from '@/app/utils/fetch';
-import { headers } from 'next/headers';
+import { post, refreshToken } from '@/app/utils/fetch';
 
-const authOptions: AuthOptions = {
+export const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -17,7 +16,12 @@ const authOptions: AuthOptions = {
 					id: profile.sub,
 					name: profile.name,
 					email: profile.email,
-					image: profile.picture,
+					user: {
+						id: profile.sub,
+						name: profile.name,
+						email: profile.email,
+						image: profile.picture,
+					},
 				};
 			},
 		}),
@@ -31,8 +35,11 @@ const authOptions: AuthOptions = {
 			async profile(profile) {
 				return {
 					id: profile.id,
-					name: profile.display_name,
-					email: profile.default_email,
+					user: {
+						id: profile.id,
+						name: profile.display_name,
+						email: profile.default_email,
+					},
 				};
 			},
 		}),
@@ -59,10 +66,7 @@ const authOptions: AuthOptions = {
 					const res = await post('auth/login', credentials);
 
 					setCookie(res);
-					// await post('auth/log', {});
 					const auth = await res.json();
-
-					console.log('auth', auth.account.access_token);
 
 					if (res.ok && auth) {
 						return auth;
@@ -88,8 +92,9 @@ const authOptions: AuthOptions = {
 			}
 
 			const { provider, providerAccountId, type } = account;
-			const { name, email, image } = user;
-
+			const {
+				user: { name, email, image },
+			} = user;
 			try {
 				const res = await post('auth/login', {
 					name,
@@ -103,37 +108,35 @@ const authOptions: AuthOptions = {
 
 				const response = await res.json();
 
-				user.id = response.user.id;
+				user.user.id = response.user.id;
 				user.image = response.user.image;
+				user.account = response.account;
 
 				if (res.ok) {
 					return true;
 				}
 			} catch (error) {
 				console.log(error);
-
 				throw new Error('Login error');
 			}
 			return false;
 		},
 
-		async jwt({ token, user, trigger, account }) {
-			if (user?.account && user?.user && account?.provider === 'credentials') {
-				token.account = user.account;
-				token.user = user.user;
+		async jwt({ token, user, trigger }) {
+			if (user) {
+				return { ...token, ...user };
+			}
+
+			if (token.account.expires_at && Date.now() < token.account.expires_at) {
 				return token;
 			}
-			if (account) {
-				token.account = account;
-			}
-			if (user) {
-				token.user = user;
-			}
-			return token;
+
+			return await refreshToken(token);
 		},
 		async session({ token, session }) {
 			session.user = token.user;
 			session.account = token.account;
+
 			return session;
 		},
 	},

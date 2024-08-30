@@ -1,3 +1,3 @@
-export type PostOptions = {
-	returnRes?: boolean;
+export type FetchOptions = {
+	protected?: boolean;
 };

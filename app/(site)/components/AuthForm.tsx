@@ -11,7 +11,6 @@ import { FaYandex } from 'react-icons/fa';
 import { useSession, signIn } from 'next-auth/react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { post } from '@/app/utils/fetch';
 
 type Variant = 'LOGIN' | 'REGISTER';
 
@@ -93,7 +92,7 @@ const AuthForm = () => {
 	};
 
 	const logout = async () => {
-		console.log('logout');
+		await axios.get('/api/auth/log');
 	};
 
 	return (

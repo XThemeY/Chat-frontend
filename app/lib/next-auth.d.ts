@@ -8,25 +8,29 @@ declare module 'next-auth' {
 			name?: string | null | undefined;
 			login?: string;
 			email?: string | null | undefined;
+			image?: string | null | undefined;
 		};
 		account: {
 			provider: string | undefined;
 			providerAccountId: string | undefined;
 			access_token?: string | undefined;
+			expires_at?: number | undefined;
 		};
 	}
 
-	interface User extends DefaultUser {
-		account?: {
-			provider: string | undefined;
-			providerAccountId: string | undefined;
-			access_token?: string | undefined;
-		};
-		user?: {
+	interface User {
+		user: {
 			id: string;
 			name?: string | null | undefined;
 			login?: string;
 			email?: string | null | undefined;
+			image?: string | null | undefined;
+		};
+		account?: {
+			provider: string | undefined;
+			providerAccountId: string | undefined;
+			access_token?: string | undefined;
+			expires_at?: number | undefined;
 		};
 	}
 }
@@ -38,11 +42,13 @@ declare module 'next-auth/jwt' {
 			name?: string | null | undefined;
 			login?: string;
 			email?: string | null | undefined;
+			image?: string | null | undefined;
 		};
 		account: {
 			provider: string | undefined;
 			providerAccountId: string | undefined;
 			access_token?: string | undefined;
+			expires_at?: number | undefined;
 		};
 	}
 }

@@ -6,7 +6,7 @@ export const setCookie = async (res: Response) => {
 	if (cookieHeaders) {
 		const token = cookieHeaders.split(';')[0].split('=')[1];
 		cookies().set({
-			name: 'Authentication',
+			name: 'authentication',
 			value: token,
 			httpOnly: true,
 			expires: new Date(jwtDecode(token).exp! * 1000),
