@@ -2,7 +2,7 @@
 
 import Button from '@/app/components/Button';
 import Input from '@/app/components/inputs/Input';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import AuthSocialButton from './AuthSocialButton';
 import { BsGoogle } from 'react-icons/bs';
@@ -11,14 +11,22 @@ import { FaYandex } from 'react-icons/fa';
 import { useSession, signIn } from 'next-auth/react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 type Variant = 'LOGIN' | 'REGISTER';
 
 const AuthForm = () => {
-	const { data: session } = useSession();
-
+	const session = useSession();
+	const router = useRouter();
 	const [variant, setVariant] = useState<Variant>('LOGIN');
 	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		if (session?.status === 'authenticated') {
+			router.push('/users');
+		}
+	}, [session?.status, router]);
+
 	const toggleVariant = useCallback(() => {
 		if (variant === 'LOGIN') {
 			setVariant('REGISTER');
@@ -51,6 +59,7 @@ const AuthForm = () => {
 				}
 				if (callback?.ok) {
 					toast.success('Successfully logged in');
+					router.push('/users');
 				}
 			})
 			.finally(() => setIsLoading(false));
@@ -89,10 +98,6 @@ const AuthForm = () => {
 				}
 			})
 			.finally(() => setIsLoading(false));
-	};
-
-	const logout = async () => {
-		await axios.get('/api/auth/log');
 	};
 
 	return (
@@ -137,9 +142,6 @@ const AuthForm = () => {
 						{variant === 'LOGIN' ? 'Sign in' : 'Register'}
 					</Button>
 				</form>
-				<Button fullWidth type='button' onClick={logout}>
-					Logout
-				</Button>
 				<div className='mt-6'>
 					<div className='relative'>
 						<div className='absolute inset-0 flex items-center'>

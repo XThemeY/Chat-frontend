@@ -1,23 +1,14 @@
-import { getServerSession } from 'next-auth';
 import { cookies } from 'next/headers';
-import { authOptions } from '../api/auth/[...nextauth]/route';
 import { FetchOptions } from '../lib/@types';
 import { JWT } from 'next-auth/jwt';
 import { setCookie } from './cookies';
-
-const getHeaders = async () => {
-	const session = await getServerSession(authOptions);
-
-	return {
-		Cookie: cookies().toString(),
-		Authorization: `Bearer ${session?.account?.access_token}`,
-	};
-};
+import { getHeaders } from '../actions/getHeaders';
+import { signOut } from 'next-auth/react';
 
 export const post = async (
 	path: string,
 	data: object,
-	options: FetchOptions = { protected: false }
+	options: FetchOptions = { protected: true }
 ) => {
 	const authHeaders = options.protected ? await getHeaders() : {};
 
@@ -35,7 +26,7 @@ export const post = async (
 
 export const get = async (
 	path: string,
-	options: FetchOptions = { protected: false }
+	options: FetchOptions = { protected: true }
 ) => {
 	const authHeaders = options.protected ? await getHeaders() : {};
 	const res = await fetch(`${process.env.BACKEND_URL}/${path}`, {
@@ -62,3 +53,13 @@ export const refreshToken = async (token: JWT): Promise<JWT> => {
 		},
 	};
 };
+
+// export const logOut = async () => {
+// 	await signOut({ redirect: false });
+// 	const authHeaders = await getHeaders();
+// 	const res = await fetch(`${process.env.BACKEND_URL}/auth/logout`, {
+// 		method: 'POST',
+// 		headers: { ...authHeaders },
+// 	});
+// 	setCookie(res);
+// };

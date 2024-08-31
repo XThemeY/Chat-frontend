@@ -14,13 +14,17 @@ export async function POST(request: Request) {
 		if (!name || !login || !password) {
 			return new NextResponse('Invalid data', { status: 400 });
 		}
-		const res = await post('auth/register', {
-			name,
-			login,
-			password,
-			type,
-			provider,
-		});
+		const res = await post(
+			'auth/register',
+			{
+				name,
+				login,
+				password,
+				type,
+				provider,
+			},
+			{ protected: false }
+		);
 
 		if (res.status === 201) {
 			return new NextResponse(null, { status: res.status });
