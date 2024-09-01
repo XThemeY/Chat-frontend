@@ -26,12 +26,14 @@ export const post = async (
 
 export const get = async (
 	path: string,
+	data: object,
 	options: FetchOptions = { protected: true }
 ) => {
 	const authHeaders = options.protected ? await getHeaders() : {};
 	const res = await fetch(`${process.env.BACKEND_URL}/${path}`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/json', ...authHeaders },
+		body: JSON.stringify(data),
 	});
 
 	return res;
