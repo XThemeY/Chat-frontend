@@ -5,7 +5,6 @@ export async function GET(
 	request: NextRequest,
 	{ params }: { params: { id: string } }
 ) {
-	console.log('id', params);
 	try {
 		const id = params.id;
 
@@ -19,7 +18,7 @@ export async function GET(
 
 		return new NextResponse(res.statusText, { status: res.status });
 	} catch (error) {
-		console.log(error);
+		console.log(error, 'ERROR_USERS');
 		return new NextResponse('Internal Error', { status: 500 });
 	}
 }

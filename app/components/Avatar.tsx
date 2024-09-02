@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { User } from '../lib/@types/users';
+import { User } from '../lib/@types/user';
 
 interface AvatarProps {
 	user?: User | null;

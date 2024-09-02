@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import getSession from './getSession';
+import getSession from '../actions/getSession';
 
 export const getHeaders = async () => {
 	const session = await getSession();

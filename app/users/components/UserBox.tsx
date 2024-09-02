@@ -1,7 +1,7 @@
 'use client';
 
 import Avatar from '@/app/components/Avatar';
-import { User } from '@/app/lib/@types/users';
+import { User } from '@/app/lib/@types';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';

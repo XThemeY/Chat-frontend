@@ -41,14 +41,16 @@ export async function POST(request: Request) {
 			return NextResponse.json(singleConversation);
 		}
 
-		const newConversation = await post(`conversations`, {
-			userId,
-			currentUserId: currentUser?.id,
-		});
+		const newConversation = await (
+			await post(`conversations`, {
+				userId,
+				currentUserId: currentUser?.id,
+			})
+		).json();
 
 		return NextResponse.json(newConversation);
 	} catch (error) {
-		console.log(error);
+		console.log(error, 'ERROR_CONVERSATIONS');
 		return new NextResponse('Internal Error', { status: 500 });
 	}
 }

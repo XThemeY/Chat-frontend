@@ -3,8 +3,8 @@
 import useRoutes from '@/app/hooks/useRoutes';
 import { useState } from 'react';
 import DesktopItem from './DesktopItem';
-import { User } from '@/app/lib/@types/users';
 import Avatar from '../Avatar';
+import { User } from '@/app/lib/@types';
 
 interface DesktopSidebarProps {
 	currentUser: User | null;

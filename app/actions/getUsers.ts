@@ -1,4 +1,4 @@
-import { User } from '../lib/@types/users';
+import { User } from '../lib/@types/user';
 import { get } from '../utils/fetch';
 import getSession from './getSession';
 

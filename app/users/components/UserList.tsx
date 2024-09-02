@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@/app/lib/@types/users';
+import { User } from '@/app/lib/@types';
 import UserBox from './UserBox';
 
 interface UserListProps {

@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { FetchOptions } from '../lib/@types';
 import { JWT } from 'next-auth/jwt';
 import { setCookie } from './cookies';
-import { getHeaders } from '../actions/getHeaders';
+import { getHeaders } from './getHeaders';
 import { signOut } from 'next-auth/react';
 
 export const post = async (
@@ -24,16 +24,36 @@ export const post = async (
 	return res;
 };
 
-export const get = async (
+export const patch = async (
 	path: string,
 	data: object,
 	options: FetchOptions = { protected: true }
 ) => {
 	const authHeaders = options.protected ? await getHeaders() : {};
+
 	const res = await fetch(`${process.env.BACKEND_URL}/${path}`, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+			...authHeaders,
+		},
+		body: JSON.stringify(data),
+	});
+
+	return res;
+};
+
+export const get = async (
+	path: string,
+	params?: { [key: string]: string } | undefined,
+	options: FetchOptions = { protected: true }
+) => {
+	const authHeaders = options.protected ? await getHeaders() : {};
+	const newParams = params ? `?${new URLSearchParams(params).toString()}` : '';
+
+	const res = await fetch(`${process.env.BACKEND_URL}/${path}` + newParams, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/json', ...authHeaders },
-		body: JSON.stringify(data),
 	});
 
 	return res;

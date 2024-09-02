@@ -1,6 +1,6 @@
 import getSession from './getSession';
 import { get } from '../utils/fetch';
-import { User } from '../lib/@types/users';
+import { User } from '../lib/@types/user';
 
 const getCurrentUser = async () => {
 	try {

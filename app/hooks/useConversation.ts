@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 const useConversation = () => {
 	const params = useParams();
+
 	const conversationId = useMemo(() => {
 		if (!params?.conversationId) {
 			return '';
@@ -12,7 +13,7 @@ const useConversation = () => {
 
 	const isOpen = useMemo(() => !!conversationId, [conversationId]);
 
-	return useMemo(() => ({ isOpen, conversationId }), [conversationId, isOpen]);
+	return useMemo(() => ({ isOpen, conversationId }), [isOpen, conversationId]);
 };
 
 export default useConversation;

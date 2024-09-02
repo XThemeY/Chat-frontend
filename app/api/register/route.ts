@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
 		return new NextResponse('Internal Error', { status: res.status });
 	} catch (error) {
-		console.log(error);
+		console.log(error, 'ERROR_REGISTER');
 		return new NextResponse('Internal Error', { status: 500 });
 	}
 }

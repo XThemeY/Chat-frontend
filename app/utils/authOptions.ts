@@ -74,7 +74,8 @@ export const authOptions: AuthOptions = {
 						return auth;
 					}
 				} catch (error) {
-					throw new Error('Invalid credentials');
+					console.log(error, 'ERROR_LOGIN');
+					throw new Error('Login error');
 				}
 			},
 		}),
@@ -123,7 +124,7 @@ export const authOptions: AuthOptions = {
 					return true;
 				}
 			} catch (error) {
-				console.log(error);
+				console.log(error, 'ERROR_OAUTH_LOGIN');
 				throw new Error('Login error');
 			}
 			return false;
