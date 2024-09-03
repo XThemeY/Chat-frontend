@@ -25,9 +25,9 @@ const Form = () => {
 		});
 	};
 
-	const handleUpload = (result: any) => {
+	const handleUpload = (result: string) => {
 		axios.post(`/api/messages`, {
-			image: result?.info?.secure_url,
+			image: result,
 			conversationId,
 		});
 	};

@@ -28,7 +28,6 @@ export async function POST(request: Request) {
 			lastMessageAt: newMessage.createdAt,
 			messageId: newMessage.id,
 		});
-		console.log('newMessage', newMessage);
 
 		return new NextResponse(newMessage, { status: 201 });
 	} catch (error) {

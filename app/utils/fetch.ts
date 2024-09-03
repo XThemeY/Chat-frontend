@@ -24,6 +24,25 @@ export const post = async (
 	return res;
 };
 
+export const del = async (
+	path: string,
+	data: object,
+	options: FetchOptions = { protected: true }
+) => {
+	const authHeaders = options.protected ? await getHeaders() : {};
+
+	const res = await fetch(`${process.env.BACKEND_URL}/${path}`, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json',
+			...authHeaders,
+		},
+		body: JSON.stringify(data),
+	});
+
+	return res;
+};
+
 export const patch = async (
 	path: string,
 	data: object,

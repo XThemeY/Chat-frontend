@@ -34,13 +34,11 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 	const userId = useMemo(() => {
 		return session?.data?.user?.id;
 	}, [session?.data?.user?.id]);
-
 	const hasSeen = useMemo(() => {
 		if (!lastMessage) {
 			return false;
 		}
 		const seenArray = lastMessage.seen || [];
-
 		if (!userId) {
 			return false;
 		}
@@ -51,7 +49,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 		if (lastMessage?.image) {
 			return 'Sent an image';
 		}
-		if (lastMessage?.attachments) {
+		if (lastMessage?.attachments.length) {
 			return 'Sent an attachment';
 		}
 		if (lastMessage?.body) {
@@ -84,7 +82,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 					<p
 						className={clsx(
 							'text-sm truncate',
-							hasSeen ? 'text-gray-500' : 'text-black font-medium'
+							hasSeen ? 'text-gray-500' : 'text-black font-bold'
 						)}>
 						{lastMessageText}
 					</p>

@@ -21,12 +21,10 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onUpload }) => {
 		});
 		setFile(newFile);
 		setUploadUrl(url);
-		console.log('file', file);
 
 		if (!uploadUrl || !file) {
 			return;
 		}
-
 		axios
 			.put(uploadUrl, file, {
 				onUploadProgress: (progressEvent) =>
@@ -39,8 +37,8 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onUpload }) => {
 				},
 			})
 			.then(() => {
-				// onUpload(objectName);
-				console.log();
+				const fileURL = 'http://wasted-chat.ru:9000/wasted-chat/' + file.name;
+				onUpload(fileURL);
 			})
 			.catch((error) => {
 				console.error('Ошибка загрузки файла', error);
