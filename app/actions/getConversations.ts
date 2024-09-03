@@ -8,7 +8,9 @@ const getConversations = async () => {
 		return [];
 	}
 	try {
-		const response = await get(`conversations`, { userId: currentUser.id });
+		const response = await get(`conversations`, {
+			currentUserId: currentUser.id,
+		});
 
 		const conversations: FullConversationType[] = await response.json();
 		return conversations;

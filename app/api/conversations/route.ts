@@ -30,15 +30,13 @@ export async function POST(request: Request) {
 
 		const existingConversations = await (
 			await get(`conversations`, {
+				currentUserId: currentUser.id,
 				userId,
-				currentUserId: currentUser?.id,
 			})
 		).json();
 
-		const singleConversation = existingConversations[0];
-
-		if (singleConversation) {
-			return NextResponse.json(singleConversation);
+		if (existingConversations.length) {
+			return NextResponse.json(existingConversations);
 		}
 
 		const newConversation = await (

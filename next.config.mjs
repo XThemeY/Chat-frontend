@@ -6,6 +6,7 @@ const nextConfig = {
 			{ hostname: 'avatars.mds.yandex.net' },
 			{ hostname: 'res.cloudinary.com' },
 			{ hostname: 'lh3.googleusercontent.com' },
+			{ hostname: 'wasted-chat.ru' },
 		],
 	},
 };
