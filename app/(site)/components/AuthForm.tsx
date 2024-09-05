@@ -1,6 +1,5 @@
 'use client';
 
-import Button from '@/app/components/Button';
 import Input from '@/app/components/inputs/Input';
 import { useCallback, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
@@ -12,6 +11,7 @@ import { useSession, signIn } from 'next-auth/react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import Button from '@/app/components/buttons/Button';
 
 type Variant = 'LOGIN' | 'REGISTER';
 

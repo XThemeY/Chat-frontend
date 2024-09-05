@@ -3,9 +3,9 @@
 import useConversation from '@/app/hooks/useConversation';
 import axios from 'axios';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { HiPaperAirplane } from 'react-icons/hi2';
+import { HiPaperAirplane, HiPhoto } from 'react-icons/hi2';
 import MessageInput from './MessageInput';
-import FileUploadButton from './FileUploadButton';
+import UploadButton from '@/app/components/buttons/UploadButton';
 
 const Form = () => {
 	const { conversationId } = useConversation();
@@ -34,8 +34,13 @@ const Form = () => {
 
 	return (
 		<div className='py-4 px-4 bg-white border-t flex items-center gap-2 lg:gap-4 w-full'>
-			<FileUploadButton onUpload={handleUpload} />
-
+			<UploadButton
+				onUpload={handleUpload}
+				inputId='msgs-file-input'
+				type='button'
+				secondary>
+				<HiPhoto size={30} className='text-sky-500' />
+			</UploadButton>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
 				className='flex items-center gap-2 lg:gap-4 w-full'>

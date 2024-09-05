@@ -1,7 +1,7 @@
 import { get } from '@/app/utils/fetch';
 import { NextResponse, NextRequest } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
 	try {
 		const response = await get('upload');
 		const data = await response.json();

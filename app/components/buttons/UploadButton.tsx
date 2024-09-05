@@ -2,18 +2,36 @@
 
 import axios from 'axios';
 import { useState } from 'react';
-import { HiPhoto } from 'react-icons/hi2';
+import Button from './Button';
 
-interface FileUploadButtonProps {
-	onUpload: (result: any) => void;
+interface UploadButtonProps {
+	inputId: string;
+	onUpload: (result: string) => void;
+	type: 'button' | 'submit' | 'reset' | undefined;
+	fullWidth?: boolean;
+	children?: React.ReactNode;
+	onClick?: () => void;
+	secondary?: boolean;
+	danger?: boolean;
+	disabled?: boolean;
 }
 
-const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onUpload }) => {
+const UploadButton: React.FC<UploadButtonProps> = ({
+	inputId,
+	onUpload,
+	children,
+	type,
+	fullWidth,
+	onClick,
+	secondary,
+	danger,
+	disabled,
+}) => {
 	const [file, setFile] = useState<any>(null);
 	const [uploadUrl, setUploadUrl] = useState<any>(null);
 
 	const handleUpload = async (e: any) => {
-		const { data } = await axios.post(`/api/upload`);
+		const { data } = await axios.get(`/api/upload`);
 		const { url, objectName } = data;
 
 		const newFile = new File([e.target.files[0]], `${objectName}`, {
@@ -47,20 +65,23 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onUpload }) => {
 
 		alert(`File uploaded: ${file.name}`);
 	};
-
 	return (
-		<div>
-			<label htmlFor='file-input' className='cursor-pointer'>
-				<HiPhoto size={30} className='text-sky-500' />
+		<Button
+			onClick={onClick}
+			type={type}
+			disabled={disabled}
+			secondary={secondary}>
+			<label htmlFor={inputId} className='cursor-pointer'>
+				{children}
 			</label>
 			<input
-				id='file-input'
+				id={inputId}
 				type='file'
 				onChange={handleUpload}
 				className='hidden'
 			/>
-		</div>
+		</Button>
 	);
 };
 
-export default FileUploadButton;
+export default UploadButton;

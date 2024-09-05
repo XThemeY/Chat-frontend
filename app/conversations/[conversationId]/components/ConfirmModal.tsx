@@ -8,7 +8,7 @@ import { useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { DialogTitle } from '@headlessui/react';
-import Button from '@/app/components/Button';
+import Button from '@/app/components/buttons/Button';
 
 interface ConfirmModalProps {
 	isOpen?: boolean;

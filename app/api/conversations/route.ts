@@ -18,12 +18,14 @@ export async function POST(request: Request) {
 		}
 
 		if (isGroup) {
-			const newConversation = await post(`conversations`, {
-				userId,
-				isGroup,
-				members,
-				name,
-			});
+			const newConversation = await (
+				await post(`conversations`, {
+					currentUserId: currentUser.id,
+					isGroup,
+					members,
+					name,
+				})
+			).json();
 
 			return NextResponse.json(newConversation);
 		}

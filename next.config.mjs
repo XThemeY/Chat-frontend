@@ -4,6 +4,7 @@ const nextConfig = {
 		remotePatterns: [
 			{ hostname: 'avatar.iran.liara.run' },
 			{ hostname: 'avatars.mds.yandex.net' },
+			{ hostname: 'ui-avatars.com' },
 			{ hostname: 'res.cloudinary.com' },
 			{ hostname: 'lh3.googleusercontent.com' },
 			{ hostname: 'wasted-chat.ru' },
