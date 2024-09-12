@@ -11,6 +11,7 @@ export const setCookie = async (res: Response) => {
 			httpOnly: true,
 			expires: new Date(jwtDecode(token).exp! * 1000),
 			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'none',
 		});
 	} else {
 		cookies().delete('authentication');

@@ -3,10 +3,13 @@ import useConversation from '@/app/hooks/useConversation';
 import { FullConversationType, User } from '@/app/lib/@types';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MdOutlineGroupAdd } from 'react-icons/md';
 import ConversationBox from './ConversationBox';
 import GroupChatModal from './GroupChatModal';
+import { useSession } from 'next-auth/react';
+import useSocket from '@/app/hooks/useSocket';
+import { find } from 'lodash';
 
 interface ConversationListProps {
 	initialItems: FullConversationType[];
@@ -17,11 +20,73 @@ const ConversationList: React.FC<ConversationListProps> = ({
 	initialItems,
 	users,
 }) => {
+	const session = useSession();
 	const [items, setItems] = useState(initialItems);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const router = useRouter();
+	const socket = useSocket();
 
 	const { conversationId, isOpen } = useConversation();
+
+	const socketKey = useMemo(() => {
+		return session?.data?.user?.id;
+	}, [session?.data?.user?.id]);
+
+	useEffect(() => {
+		if (!socketKey) {
+			return;
+		}
+
+		const newHandler = (conversation: FullConversationType) => {
+			setItems((current) => {
+				if (find(current, { id: conversation.id })) {
+					return current;
+				}
+				return [conversation, ...current];
+			});
+		};
+
+		const updateHandler = (conversation: FullConversationType) => {
+			setItems((current) =>
+				current.map((currentConversation, index) => {
+					if (currentConversation.id === conversation.id) {
+						return {
+							...currentConversation,
+							messages: conversation.messages,
+						};
+					}
+					return currentConversation;
+				})
+			);
+		};
+
+		const deleteHandler = (conversation: FullConversationType) => {
+			setItems((current) => {
+				return [
+					...current.filter(
+						(currentConversation) => currentConversation.id !== conversation.id
+					),
+				];
+			});
+			if (conversation.id === conversationId) {
+				router.push('/conversations');
+			}
+		};
+
+		if (socket) {
+			socket.emit('subscribe', { room: socketKey });
+			socket.on('conversation:new', newHandler);
+			socket.on('conversation:update', updateHandler);
+			socket.on('conversation:delete', deleteHandler);
+
+			return () => {
+				socket.emit('unsubscribe', { room: socketKey });
+				socket.off('conversation:new', newHandler);
+				socket.off('conversation:update', updateHandler);
+				socket.off('conversation:delete', deleteHandler);
+			};
+		}
+	}, [socketKey, socket, conversationId, router]);
 
 	return (
 		<>

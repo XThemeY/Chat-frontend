@@ -20,7 +20,6 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 				include: 'seen',
 			})
 		).json();
-
 		if (!conversation) {
 			return new NextResponse('Invalid ID', { status: 400 });
 		}
@@ -34,6 +33,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 		const updatedMessage = await (
 			await patch(`messages/${lastMessage.id}`, {
 				currentUserId: currentUser.id,
+				conversationId,
 			})
 		).json();
 
