@@ -20,14 +20,15 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 				include: 'seen',
 			})
 		).json();
-		if (!conversation) {
+		if (!conversation.length) {
 			return new NextResponse('Invalid ID', { status: 400 });
 		}
 
-		const lastMessage = conversation.messages[conversation.messages.length - 1];
+		const lastMessage =
+			conversation[0].messages[conversation[0].messages.length - 1];
 
 		if (!lastMessage) {
-			return NextResponse.json(conversation);
+			return NextResponse.json(conversation[0]);
 		}
 
 		const updatedMessage = await (

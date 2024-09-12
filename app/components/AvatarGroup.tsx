@@ -1,8 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { User } from '../lib/@types';
-
+import { Avatar as AvatarUi } from '@nextui-org/avatar';
 interface AvatarGroupProps {
 	users?: User[];
 }
@@ -24,10 +23,11 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users = [] }) => {
 					className={`absolute inline-block rounded-full overflow-hidden h-[21px] w-[21px] ${
 						positionMap[index as keyof typeof positionMap]
 					} `}>
-					<Image
+					<AvatarUi
+						key={user.id}
 						src={user?.image ?? '/images/placeholder.webp'}
 						alt='Avatar'
-						fill
+						name={user?.name}
 					/>
 				</div>
 			))}

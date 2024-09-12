@@ -9,7 +9,11 @@ const getUsers = async () => {
 			return [];
 		}
 		const response = await get(`users/`);
+		if (!response.ok) {
+			throw new Error(`${response.status}:${response.statusText}`);
+		}
 		const users: User[] = await response.json();
+
 		return users;
 	} catch (error) {
 		return [];

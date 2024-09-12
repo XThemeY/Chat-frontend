@@ -12,8 +12,9 @@ const useOtherUser = (
 		const otherUser = conversation.users.filter(
 			(user) => user.id !== currentUserId
 		);
+
 		return otherUser[0];
-	}, [session?.data?.user, conversation.users]);
+	}, [conversation.users, session?.data?.user?.id]);
 
 	return otherUser;
 };

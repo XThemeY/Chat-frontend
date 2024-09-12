@@ -25,6 +25,14 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
 	}, [conversationId]);
 
 	useEffect(() => {
+		if (bottomRef.current) {
+			bottomRef.current.scrollIntoView({
+				behavior: 'smooth',
+			});
+		}
+	}, [messages]);
+
+	useEffect(() => {
 		const messageHandler = (message: FullMessageType) => {
 			axios.post(`/api/conversations/${conversationId}/seen`, {
 				conversationId,
@@ -35,7 +43,6 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
 				}
 				return [...current, message];
 			});
-			bottomRef?.current?.scrollIntoView({ behavior: 'smooth' });
 		};
 
 		const updateMessageHandler = (newMessage: FullMessageType) => {
@@ -51,9 +58,9 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
 
 		if (socket) {
 			socket.emit('subscribe', { room: conversationId });
-			bottomRef?.current?.scrollIntoView({ behavior: 'smooth' });
 			socket.on('message:new', messageHandler);
 			socket.on('message:update', updateMessageHandler);
+
 			return () => {
 				socket.emit('unsubscribe', { room: conversationId });
 				socket.off('message:new', messageHandler);
@@ -69,10 +76,9 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
 					key={message.id}
 					data={message}
 					isLast={i === messages.length - 1}
+					bottomRef={bottomRef}
 				/>
 			))}
-
-			<div ref={bottomRef} className='pt-24' />
 		</div>
 	);
 };

@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 
 const useActiveChannel = () => {
 	const { members, set, add, remove } = useActiveList();
-	const [activeChannel, setActiveChannel] = useState<Socket | null>(null);
+	const [activeChannel, setActiveChannel] = useState<Socket | null>();
 	const socket = useSocket();
 	const session = useSession();
 	const currentUserId = session?.data?.user?.id;
@@ -45,8 +45,6 @@ const useActiveChannel = () => {
 			}
 		}
 		return () => {
-			console.log('activeChannel', activeChannel);
-
 			if (activeChannel) {
 				channel?.emit('unsubscribe', {
 					room: 'presense-messenger',

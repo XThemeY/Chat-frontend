@@ -36,9 +36,8 @@ export async function POST(request: Request) {
 				userId,
 			})
 		).json();
-
 		if (existingConversations.length) {
-			return NextResponse.json(existingConversations);
+			return NextResponse.json(existingConversations[0]);
 		}
 
 		const newConversation = await (

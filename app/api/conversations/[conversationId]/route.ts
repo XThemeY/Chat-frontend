@@ -18,13 +18,13 @@ export async function DELETE(
 			return new NextResponse('Unauthorized', { status: 401 });
 		}
 
-		// const existingConversations = await (
-		// 	await get(`conversations/${conversationId}`)
-		// ).json();
+		const existingConversations = await (
+			await get(`conversations/${conversationId}`)
+		).json();
 
-		// if (!existingConversations) {
-		// 	return new NextResponse('Invalid ID', { status: 400 });
-		// }
+		if (!existingConversations.length) {
+			return new NextResponse('Invalid ID', { status: 400 });
+		}
 
 		const deletedConversation = await (
 			await del(`conversations/${conversationId}`, {

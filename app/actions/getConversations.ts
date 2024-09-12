@@ -11,8 +11,11 @@ const getConversations = async () => {
 		const response = await get(`conversations`, {
 			currentUserId: currentUser.id,
 		});
-
+		if (!response.ok) {
+			throw new Error(`${response.status}:${response.statusText}`);
+		}
 		const conversations: FullConversationType[] = await response.json();
+
 		return conversations;
 	} catch (error) {
 		return [];

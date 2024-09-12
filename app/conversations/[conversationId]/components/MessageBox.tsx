@@ -5,16 +5,17 @@ import { FullMessageType } from '@/app/lib/@types';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
-import Image from 'next/image';
+import { Image } from '@nextui-org/image';
 import { useState } from 'react';
 import ImageModal from './ImageModal';
 
 interface MessageBoxProps {
 	data: FullMessageType;
 	isLast?: boolean;
+	bottomRef: React.RefObject<HTMLDivElement>;
 }
 
-const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
+const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast, bottomRef }) => {
 	const session = useSession();
 	const [imageModalOpen, setImageModalOpen] = useState(false);
 
@@ -30,10 +31,10 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
 	const message = clsx(
 		'text-sm w-fit overflow-hidden',
 		isOwn ? 'bg-sky-500 text-white' : 'bg-gray-100',
-		data.image ? 'rounded-md p-0' : 'rounded-full py-2 px-3'
+		data.image ? 'rounded-md p-0' : 'rounded-2xl py-2 px-3'
 	);
 	return (
-		<div className={container}>
+		<div className={container} ref={isLast ? bottomRef : null}>
 			<div className={avatar}>
 				<Avatar user={data.sender} />
 			</div>
@@ -55,13 +56,13 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
 						<Image
 							onClick={() => setImageModalOpen(true)}
 							alt='Image'
-							height={288}
 							width={288}
+							height={288}
 							src={data.image}
 							className='object-cover cursor-pointer hover:scale-110 transition translate'
 						/>
 					) : (
-						<div>{data.body}</div>
+						<div className='max-w-xs break-words'>{data.body}</div>
 					)}
 				</div>
 				{isLast && isOwn && seenList.length > 0 && (

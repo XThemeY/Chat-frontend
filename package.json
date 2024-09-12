@@ -10,11 +10,13 @@
 	},
 	"dependencies": {
 		"@headlessui/react": "^2.1.4",
+		"@nextui-org/react": "^2.4.6",
 		"@tailwindcss/forms": "^0.5.7",
 		"@types/lodash": "^4.17.7",
 		"axios": "^1.7.4",
 		"clsx": "^2.1.1",
 		"date-fns": "^3.6.0",
+		"framer-motion": "^11.5.4",
 		"jwt-decode": "^4.0.0",
 		"lodash": "^4.17.21",
 		"next": "14.2.5",

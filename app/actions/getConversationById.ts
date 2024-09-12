@@ -10,10 +10,14 @@ const getConversationById = async (conversationId: string) => {
 
 		const response = await get(`conversations/${conversationId}`);
 
+		if (!response.ok) {
+			throw new Error(`${response.status}:${response.statusText}`);
+		}
 		const conversation = await response.json();
 
-		return conversation;
+		return conversation[0];
 	} catch (error) {
+		console.log('getConversationById', error);
 		return null;
 	}
 };

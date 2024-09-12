@@ -5,14 +5,17 @@ import NextTopLoader from 'nextjs-toploader';
 import ToasterContext from '../context/ToasterContext';
 import AuthContext from '../context/AuthContext';
 import ActiveStatus from './ActiveStatus';
+import Auth from './Auth';
 
 const Providers: React.FC<React.PropsWithChildren> = ({ children }) => {
 	return (
 		<AuthContext>
-			{children}
-			<ToasterContext />
-			<ActiveStatus />
-			<NextTopLoader />
+			<Auth>
+				{children}
+				<ToasterContext />
+				<ActiveStatus />
+				<NextTopLoader />
+			</Auth>
 		</AuthContext>
 	);
 };

@@ -9,7 +9,9 @@ const getCurrentUser = async () => {
 			return null;
 		}
 		const response = await get(`users/${session.user.id}`);
-
+		if (!response.ok) {
+			throw new Error(`${response.status}:${response.statusText}`);
+		}
 		const currentUser: User = await response.json();
 
 		if (!currentUser) {

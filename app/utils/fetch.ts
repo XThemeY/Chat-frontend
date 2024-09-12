@@ -74,7 +74,6 @@ export const get = async (
 		method: 'GET',
 		headers: { 'Content-Type': 'application/json', ...authHeaders },
 	});
-
 	return res;
 };
 

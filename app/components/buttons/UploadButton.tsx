@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 
 interface UploadButtonProps {
@@ -27,19 +27,10 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 	danger,
 	disabled,
 }) => {
-	const [file, setFile] = useState<any>(null);
-	const [uploadUrl, setUploadUrl] = useState<any>(null);
+	const [file, setFile] = useState<File | null>(null);
+	const [uploadUrl, setUploadUrl] = useState<string | null>(null);
 
-	const handleUpload = async (e: any) => {
-		const { data } = await axios.get(`/api/upload`);
-		const { url, objectName } = data;
-
-		const newFile = new File([e.target.files[0]], `${objectName}`, {
-			type: `${e.target.files[0].type}`,
-		});
-		setFile(newFile);
-		setUploadUrl(url);
-
+	useEffect(() => {
 		if (!uploadUrl || !file) {
 			return;
 		}
@@ -62,9 +53,22 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 				console.error('Ошибка загрузки файла', error);
 				alert('Ошибка загрузки файла');
 			});
+		setFile(null);
+		setUploadUrl(null);
+	}, [file, uploadUrl, onUpload]);
 
-		alert(`File uploaded: ${file.name}`);
+	const handleUpload = async (e: any) => {
+		const { data } = await axios.get(`/api/upload`);
+		const { url, objectName } = data;
+
+		const newFile = new File([e.target.files[0]], `${objectName}`, {
+			type: `${e.target.files[0].type}`,
+		});
+
+		setFile(newFile);
+		setUploadUrl(url);
 	};
+
 	return (
 		<Button
 			onClick={onClick}

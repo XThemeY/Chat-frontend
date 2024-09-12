@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { FullConversationType } from '@/app/lib/@types';
@@ -9,7 +9,7 @@ import clsx from 'clsx';
 import useOtherUser from '@/app/hooks/useOtherUser';
 import Avatar from '@/app/components/Avatar';
 import AvatarGroup from '@/app/components/AvatarGroup';
-
+import { Skeleton } from '@nextui-org/skeleton';
 interface ConversationBoxProps {
 	data: FullConversationType;
 	selected?: boolean;
@@ -22,6 +22,13 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 	const otherUser = useOtherUser(data);
 	const session = useSession();
 	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		if (otherUser) {
+			setIsLoading(false);
+		}
+	}, [otherUser]);
 
 	const handleClick = useCallback(() => {
 		router.push(`/conversations/${data.id}`);
@@ -35,6 +42,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 	const userId = useMemo(() => {
 		return session?.data?.user?.id;
 	}, [session?.data?.user?.id]);
+
 	const hasSeen = useMemo(() => {
 		if (!lastMessage) {
 			return false;
@@ -74,23 +82,30 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
 			<div className='min-w-0 flex-1'>
 				<div className='focus:outline-none'>
 					<div className='flex justify-between items-center mb-1'>
-						<p className='text-md font-medium text-gray-900'>
-							{data.name || otherUser.name}
-						</p>
-
+						{isLoading ? (
+							<Skeleton className='h-3 w-3/5 rounded-lg' />
+						) : (
+							<p className='text-md font-medium text-gray-900'>
+								{data.name || otherUser.name}
+							</p>
+						)}
 						{lastMessage?.createdAt && (
 							<p className='text-xs font-light text-gray-400'>
 								{format(new Date(lastMessage.createdAt), 'HH:mm')}
 							</p>
 						)}
 					</div>
-					<p
-						className={clsx(
-							'text-sm truncate',
-							hasSeen ? 'text-gray-500' : 'text-black font-bold'
-						)}>
-						{lastMessageText}
-					</p>
+					{isLoading ? (
+						<Skeleton className='h-3 w-3/5 rounded-lg' />
+					) : (
+						<p
+							className={clsx(
+								'text-sm truncate',
+								hasSeen ? 'text-gray-500' : 'text-black font-bold'
+							)}>
+							{lastMessageText}
+						</p>
+					)}
 				</div>
 			</div>
 		</button>
