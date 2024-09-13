@@ -5,15 +5,14 @@ import { Socket } from 'socket.io-client';
 import { useSession } from 'next-auth/react';
 
 const useActiveChannel = () => {
-	const { members, set, add, remove } = useActiveList();
+	const { set, add, remove } = useActiveList();
 	const [activeChannel, setActiveChannel] = useState<Socket | null>();
 	const socket = useSocket();
-	const session = useSession();
-	const currentUserId = session?.data?.user?.id;
-	console.log('members', members);
-
+	const { data } = useSession();
+	const currentUserId = data?.user?.id;
 	useEffect(() => {
 		let channel = activeChannel;
+
 		if (currentUserId) {
 			if (!channel) {
 				channel = socket?.emit('subscribe', {
@@ -40,8 +39,6 @@ const useActiveChannel = () => {
 					remove(member.id);
 					console.log('member_removed', member);
 				});
-
-				console.log('clientID', activeChannel?.id);
 			}
 		}
 		return () => {

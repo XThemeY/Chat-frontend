@@ -1,9 +1,6 @@
 import { cookies } from 'next/headers';
 import { FetchOptions } from '../lib/@types';
-import { JWT } from 'next-auth/jwt';
-import { setCookie } from './cookies';
-import { getHeaders } from './getHeaders';
-import { signOut } from 'next-auth/react';
+import { getHeaders } from '../actions/getHeaders';
 
 export const post = async (
 	path: string,
@@ -77,29 +74,10 @@ export const get = async (
 	return res;
 };
 
-export const refreshToken = async (token: JWT): Promise<JWT> => {
+export const refreshToken = async (): Promise<Response> => {
 	const res = await fetch(`${process.env.BACKEND_URL}/auth/refresh`, {
 		method: 'POST',
 		headers: { Cookie: cookies().toString() },
 	});
-	setCookie(res);
-	const response = await res.json();
-	return {
-		...token,
-		account: {
-			...token.account,
-			access_token: response.access_token,
-			expires_at: response.expires_at,
-		},
-	};
+	return res;
 };
-
-// export const logOut = async () => {
-// 	await signOut({ redirect: false });
-// 	const authHeaders = await getHeaders();
-// 	const res = await fetch(`${process.env.BACKEND_URL}/auth/logout`, {
-// 		method: 'POST',
-// 		headers: { ...authHeaders },
-// 	});
-// 	setCookie(res);
-// };

@@ -2,9 +2,10 @@ import GoogleProvider from 'next-auth/providers/google';
 import VkProvider from 'next-auth/providers/vk';
 import YandexProvider from 'next-auth/providers/yandex';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { setCookie } from '@/app/utils';
 import { post, refreshToken } from '@/app/utils/fetch';
 import { AuthOptions } from 'next-auth';
+import { cookies } from 'next/headers';
+import { jwtDecode } from 'jwt-decode';
 
 export const authOptions: AuthOptions = {
 	providers: [
@@ -67,11 +68,10 @@ export const authOptions: AuthOptions = {
 						protected: false,
 					});
 
-					setCookie(res);
-					const auth = await res.json();
+					const response = await setCookies(res);
 
-					if (res.ok && auth) {
-						return auth;
+					if (res.ok && response) {
+						return response;
 					}
 				} catch (error) {
 					console.log(error, 'ERROR_LOGIN');
@@ -86,7 +86,7 @@ export const authOptions: AuthOptions = {
 
 	secret: process.env.NEXTAUTH_SECRET,
 	callbacks: {
-		async signIn({ user, account, profile }) {
+		async signIn({ user, account }) {
 			if (account?.provider === 'credentials') {
 				return true;
 			}
@@ -112,9 +112,7 @@ export const authOptions: AuthOptions = {
 					},
 					{ protected: false }
 				);
-				setCookie(res);
-
-				const response = await res.json();
+				const response = await setCookies(res);
 
 				user.user.id = response.user.id;
 				user.image = response.user.image;
@@ -127,10 +125,11 @@ export const authOptions: AuthOptions = {
 				console.log(error, 'ERROR_OAUTH_LOGIN');
 				throw new Error('Login error');
 			}
+
 			return false;
 		},
 
-		async jwt({ token, user, trigger }) {
+		async jwt({ token, user }) {
 			if (user) {
 				return { ...token, ...user };
 			}
@@ -139,14 +138,53 @@ export const authOptions: AuthOptions = {
 				return token;
 			}
 
-			return await refreshToken(token);
+			const res = await refreshToken();
+			const response = await res.json();
+			if (res.ok) {
+				return {
+					...token,
+					account: {
+						...token.account,
+						access_token: response.access_token,
+						expires_at: response.expires_at,
+					},
+				};
+			}
+			return {
+				...token,
+				error: res.statusText,
+			};
 		},
 		async session({ token, session }) {
-			session.user = token.user;
-			session.account = token.account;
+			if (token.account.access_token) {
+				session.user = token.user;
+				session.account = token.account;
+			}
+			session.error = token.error;
 
 			return session;
 		},
 	},
 	debug: process.env.NODE_ENV === 'development',
+};
+
+const setCookies = async (res: Response) => {
+	const cookieHeaders = res.headers.get('Set-Cookie');
+	if (cookieHeaders) {
+		const token = cookieHeaders.split(';')[0].split('=')[1];
+
+		cookies().set({
+			name: 'authentication',
+			value: token,
+			httpOnly: true,
+			expires: new Date(jwtDecode(token).exp! * 1000),
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+		});
+	} else {
+		cookies().delete('authentication');
+		cookies().delete('next-auth.session-token');
+	}
+
+	return await res.json();
 };

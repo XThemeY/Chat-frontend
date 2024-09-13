@@ -5,12 +5,15 @@ const useSocket = () => {
 	const [socket, setSocket] = useState<Socket>();
 
 	useEffect(() => {
-		const socketInstance = io('http://wasted-chat.ru:3000', {
-			transports: ['websocket'],
-			auth: {
-				token: 'abc',
-			},
-		});
+		const socketInstance = io(
+			process.env.SOCKET_URL ?? 'http://wasted-chat.ru:3000',
+			{
+				transports: ['websocket'],
+				auth: {
+					token: process.env.SOCKET_AUTH_TOKEN ?? '',
+				},
+			}
+		);
 
 		setSocket(socketInstance);
 		// Отключение WebSocket при размонтировании компонента

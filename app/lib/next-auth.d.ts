@@ -16,6 +16,7 @@ declare module 'next-auth' {
 			access_token?: string | undefined;
 			expires_at?: number | undefined;
 		};
+		error: string | undefined;
 	}
 
 	interface User {
@@ -50,5 +51,6 @@ declare module 'next-auth/jwt' {
 			access_token?: string | undefined;
 			expires_at?: number | undefined;
 		};
+		error: string | undefined;
 	}
 }
