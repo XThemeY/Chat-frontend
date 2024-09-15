@@ -14,12 +14,12 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, isOpen, onClose }) => {
 	return (
 		<Modal isOpen={isOpen} onClose={onClose}>
 			<Image
-				className='object-cover'
+				className='object-cover z-0 '
 				alt='Image'
 				width={700}
 				height={700}
 				src={src}
-				style={{ width: 'auto', height: 'auto' }}
+				style={{ width: 'auto', height: '100%' }}
 			/>
 		</Modal>
 	);

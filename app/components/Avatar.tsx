@@ -5,7 +5,7 @@ import useActiveList from '../hooks/useActiveList';
 import { useSession } from 'next-auth/react';
 import { Avatar as AvatarUi } from '@nextui-org/avatar';
 interface AvatarProps {
-	user?: User;
+	user?: User | null;
 }
 
 const Avatar: React.FC<AvatarProps> = ({ user }) => {

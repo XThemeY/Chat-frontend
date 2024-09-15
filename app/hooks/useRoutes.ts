@@ -1,13 +1,16 @@
 import { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { HiChat } from 'react-icons/hi';
-import { HiArrowLeftOnRectangle, HiUsers } from 'react-icons/hi2';
+import { HiArrowLeftOnRectangle, HiUser, HiUsers } from 'react-icons/hi2';
 import useConversation from './useConversation';
 import { signOut } from 'next-auth/react';
+import DesktopSidebar from '../components/sidebar/DesktopSidebar';
+import { set } from 'lodash';
 
 const useRoutes = () => {
 	const pathname = usePathname();
 	const { conversationId } = useConversation();
+
 	const routes = useMemo(
 		() => [
 			{

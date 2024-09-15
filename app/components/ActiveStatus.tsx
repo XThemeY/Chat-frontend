@@ -8,7 +8,6 @@ const ActiveStatus = () => {
 		await signOut();
 	}, []);
 	useEffect(() => {
-		console.log('logout EXTE');
 		if (session?.error === `Unauthorized`) {
 			console.log('logout');
 
