@@ -6,7 +6,7 @@ const useSocket = () => {
 
 	useEffect(() => {
 		const socketInstance = io(
-			process.env.SOCKET_URL ?? 'http://wasted-chat.ru:3000',
+			process.env.SOCKET_URL ?? 'http://xthemey.ru:3000',
 			{
 				transports: ['websocket'],
 				auth: {

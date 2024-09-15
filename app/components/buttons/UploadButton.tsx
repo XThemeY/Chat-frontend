@@ -46,7 +46,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 				},
 			})
 			.then(() => {
-				const fileURL = 'http://wasted-chat.ru:9000/wasted-chat/' + file.name;
+				const fileURL = 'http://xthemey.ru:9000/xthemey-chat/' + file.name;
 				onUpload(fileURL);
 			})
 			.catch((error) => {

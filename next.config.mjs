@@ -7,9 +7,10 @@ const nextConfig = {
 			{ hostname: 'ui-avatars.com' },
 			{ hostname: 'res.cloudinary.com' },
 			{ hostname: 'lh3.googleusercontent.com' },
-			{ hostname: 'wasted-chat.ru' },
+			{ hostname: 'xthemey.ru' },
 		],
 	},
+	output: 'standalone',
 };
 
 export default nextConfig;

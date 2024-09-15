@@ -10,6 +10,7 @@ import { jwtDecode } from 'jwt-decode';
 export const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider({
+			checks: ['none'],
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 			async profile(profile) {
@@ -31,6 +32,7 @@ export const authOptions: AuthOptions = {
 		// 	clientSecret: process.env.VK_CLIENT_SECRET as string,
 		// }),
 		YandexProvider({
+			checks: ['none'],
 			clientId: process.env.YANDEX_CLIENT_ID as string,
 			clientSecret: process.env.YANDEX_CLIENT_SECRET as string,
 			async profile(profile) {
@@ -178,7 +180,7 @@ const setCookies = async (res: Response) => {
 			value: token,
 			httpOnly: true,
 			expires: new Date(jwtDecode(token).exp! * 1000),
-			secure: process.env.NODE_ENV === 'production',
+			secure: false,
 			sameSite: 'lax',
 		});
 	} else {

@@ -1,5 +1,3 @@
-import getCurrentUser from '@/app/actions/getCurrentUser';
-import { patch, post } from '@/app/utils/fetch';
 import { jwtDecode } from 'jwt-decode';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -15,7 +13,7 @@ export async function POST(request: Request) {
 				value: token,
 				httpOnly: true,
 				expires: new Date(jwtDecode(token).exp! * 1000),
-				secure: process.env.NODE_ENV === 'production',
+				secure: false,
 				sameSite: 'lax',
 			});
 		} else {
