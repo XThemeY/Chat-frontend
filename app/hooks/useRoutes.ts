@@ -4,8 +4,6 @@ import { HiChat } from 'react-icons/hi';
 import { HiArrowLeftOnRectangle, HiUser, HiUsers } from 'react-icons/hi2';
 import useConversation from './useConversation';
 import { signOut } from 'next-auth/react';
-import DesktopSidebar from '../components/sidebar/DesktopSidebar';
-import { set } from 'lodash';
 
 const useRoutes = () => {
 	const pathname = usePathname();
