@@ -3,8 +3,8 @@ import './globals.css';
 import Providers from './components/Providers';
 
 export const metadata: Metadata = {
-	title: 'Wasted Messenger',
-	description: 'Wasted Messenger',
+	title: 'XThemeY Messenger',
+	description: 'XThemeY Messenger',
 };
 
 export default function RootLayout({
